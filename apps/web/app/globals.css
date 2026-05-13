@@ -1,26 +1,53 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 44 41% 96%; /* #F9F7F2 Cream */
+    --foreground: 198 9% 19%; /* #2D3436 Charcoal */
+    --card: 44 41% 96%;
+    --card-foreground: 198 9% 19%;
+    --popover: 44 41% 96%;
+    --popover-foreground: 198 9% 19%;
+    --primary: 133 11% 33%; /* #4A5D4E Sage */
+    --primary-foreground: 44 41% 96%;
+    --secondary: 198 9% 19%; /* Charcoal as secondary */
+    --secondary-foreground: 44 41% 96%;
+    --muted: 44 10% 90%;
+    --muted-foreground: 198 5% 40%;
+    --accent: 133 11% 33%;
+    --accent-foreground: 44 41% 96%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Sage with 10% opacity for subtle borders */
+    --border: 133 11% 33% / 0.1;
+    --input: 133 11% 33% / 0.1;
+    --ring: 133 11% 33%;
+
+    --radius: 0.5rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-inner {
+    /* Ambient Depth - Very large blur with extremely low opacity */
+    box-shadow: 0 20px 40px -10px rgba(45, 52, 54, 0.04) !important;
+  }
 }
