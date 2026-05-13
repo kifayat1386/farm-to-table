@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis(version: "3.3.2")]
+}
+
+enum UserRole {
+  CONSUMER
+  FARMER
+  DRIVER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  HARVESTING
+  IN_TRANSIT
+  DELIVERED
+}
+
+enum ProductUnit {
+  KG
+  GRAM
+  PIECE
+  LITER
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  phone           String?  @unique
+  role            UserRole @default(CONSUMER)
+  communityDropId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  farms         Farm[]         @relation("FarmOwner")
+  orders        Order[]        @relation("UserOrders")
+  communityDrop CommunityDrop? @relation(fields: [communityDropId], references: [id])
+}
+
+model Farm {
+  id        String   @id @default(uuid())
+  name      String
+  district  String
+  hlsUrl    String?
+  metadata  Json?
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // PostGIS spatial data point
+  location Unsupported("geography(Point, 4326)")?
+
+  owner    User      @relation("FarmOwner", fields: [ownerId], references: [id])
+  products Product[]
+}
+
+model Product {
+  id        String      @id @default(uuid())
+  name      String
+  price     Float
+  unit      ProductUnit
+  stock     Int
+  farmId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id])
+}
+
+model CommunityDrop {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // PostGIS spatial data point
+  location Unsupported("geography(Point, 4326)")?
+
+  users  User[]
+  orders Order[]
+}
+
+model Order {
+  id     String      @id @default(uuid())
+  status OrderStatus @default(PENDING)
+
+  // Accrual Ledger Financials
+  platformFee  Float
+  vendorPayout Float
+  logisticsFee Float
+
+  userId          String
+  communityDropId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User           @relation("UserOrders", fields: [userId], references: [id])
+  communityDrop CommunityDrop? @relation(fields: [communityDropId], references: [id])
+}
