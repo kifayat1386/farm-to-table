@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: farmlive_db
+    environment:
+      POSTGRES_USER: farmlive_user
+      POSTGRES_PASSWORD: farmlive_password
+      POSTGRES_DB: farmlive
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - farmlive_network
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: farmlive_api
+    depends_on:
+      - db
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://farmlive_user:farmlive_password@db:5432/farmlive?schema=public
+      - PORT=3001
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sh -c "pnpm install && pnpm --filter api run start:dev"
+    networks:
+      - farmlive_network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: farmlive_web
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/apps/web/.next
+    working_dir: /app
+    command: sh -c "pnpm install && pnpm --filter web run dev"
+    networks:
+      - farmlive_network
+
+volumes:
+  pgdata:
+
+networks:
+  farmlive_network:
+    driver: bridge
