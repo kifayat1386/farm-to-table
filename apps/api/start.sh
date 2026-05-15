@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Remove prisma.config.ts if it exists to prevent TS compilation errors
 rm -f /app/apps/api/prisma.config.ts
