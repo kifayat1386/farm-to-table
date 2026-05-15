@@ -4,5 +4,5 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
-# Install openssl for Prisma engine
-RUN apk add --no-cache openssl
+# Install openssl and libc6-compat for Prisma engine on Alpine
+RUN apk add --no-cache openssl openssl-dev libc6-compat
