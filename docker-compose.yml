@@ -26,12 +26,13 @@ services:
     ports:
       - "3001:3001"
     environment:
+      # Use the docker internal network alias for the db connection
       - DATABASE_URL=postgresql://farmlive_user:farmlive_password@db:5432/farmlive?schema=public
       - PORT=3001
     volumes:
       - .:/app
-    working_dir: /app
-    command: sh -c "pnpm install && pnpm --filter api run start:dev"
+    working_dir: /app/apps/api
+    command: ./start.sh
     networks:
       - farmlive_network
 
@@ -50,8 +51,8 @@ services:
     volumes:
       - .:/app
       - /app/apps/web/.next
-    working_dir: /app
-    command: sh -c "pnpm install && pnpm --filter web run dev"
+    working_dir: /app/apps/web
+    command: ./start.sh
     networks:
       - farmlive_network
 
