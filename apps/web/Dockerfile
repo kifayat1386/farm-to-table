@@ -2,9 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install pnpm
 RUN npm install -g pnpm
 
-# In dev, volume mounting provides everything. We don't need to copy much,
-# but we provide a shell script to ensure dependencies are installed.
-CMD ["pnpm", "dev"]
+# Install libc6-compat for Next.js SWC support on Alpine
+RUN apk add --no-cache libc6-compat

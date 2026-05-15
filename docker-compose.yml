@@ -29,10 +29,11 @@ services:
       # Use the docker internal network alias for the db connection
       - DATABASE_URL=postgresql://farmlive_user:farmlive_password@db:5432/farmlive?schema=public
       - PORT=3001
+      - CI=true
     volumes:
       - .:/app
     working_dir: /app/apps/api
-    command: ./start.sh
+    command: sh ./start.sh
     networks:
       - farmlive_network
 
@@ -48,11 +49,12 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
       - PORT=3000
+      - CI=true
     volumes:
       - .:/app
       - /app/apps/web/.next
     working_dir: /app/apps/web
-    command: ./start.sh
+    command: sh ./start.sh
     networks:
       - farmlive_network
 

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Remove prisma.config.ts if it exists to prevent TS compilation errors
+rm -f /app/apps/api/prisma.config.ts
+
 # Install dependencies if they are missing
 pnpm install
 
