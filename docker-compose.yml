@@ -33,7 +33,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app/apps/api
-    command: sh ./start.sh
+    command: bash /app/apps/api/start.sh
     networks:
       - farmlive_network
 
@@ -54,7 +54,7 @@ services:
       - .:/app
       - /app/apps/web/.next
     working_dir: /app/apps/web
-    command: sh ./start.sh
+    command: bash /app/apps/web/start.sh
     networks:
       - farmlive_network
 
