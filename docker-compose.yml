@@ -16,17 +16,27 @@ services:
       - farmlive_network
     restart: unless-stopped
 
+  installer:
+    image: node:20-slim
+    container_name: farmlive_installer
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: bash -c "npm install -g pnpm && pnpm install"
+
   api:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
     container_name: farmlive_api
     depends_on:
-      - db
+      installer:
+        condition: service_completed_successfully
+      db:
+        condition: service_started
     ports:
       - "3001:3001"
     environment:
-      # Use the docker internal network alias for the db connection
       - DATABASE_URL=postgresql://farmlive_user:farmlive_password@db:5432/farmlive?schema=public
       - PORT=3001
       - CI=true
@@ -43,7 +53,10 @@ services:
       dockerfile: apps/web/Dockerfile
     container_name: farmlive_web
     depends_on:
-      - api
+      installer:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
     ports:
       - "3000:3000"
     environment:
