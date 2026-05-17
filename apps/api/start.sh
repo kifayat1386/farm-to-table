@@ -7,8 +7,10 @@ rm -f /app/apps/api/prisma.config.ts
 pnpm exec prisma generate
 
 # Apply migrations
-# Wait for DB to be ready, then run push or migrate
 npx prisma db push --accept-data-loss
+
+# Run Database Seeder
+pnpm run prisma:seed
 
 # Start NestJS in dev mode
 pnpm run start:dev

@@ -31,8 +31,17 @@ export default function FarmsPage() {
     if (selectedFarmId && isDrawerOpen) {
       // Fetch Products via REST
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/v1/market/farm/${selectedFarmId}/products`)
-        .then(res => res.json())
-        .then(data => setProducts(data))
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(data => {
+          if (Array.isArray(data)) {
+            setProducts(data);
+          } else {
+            setProducts([]);
+          }
+        })
         .catch(err => console.error('Failed to fetch products:', err));
 
       // Connect to the NestJS WebSocket Gateway

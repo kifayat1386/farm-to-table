@@ -8,14 +8,16 @@ export class MarketController {
 
   @Get('interactive-map')
   async getInteractiveMap() {
-    return prisma.farm.findMany({
-      select: {
-        id: true,
-        name: true,
-        district: true,
-      }
-    });
-    // Note: To return latitude/longitude, a raw query on the PostGIS location column is needed.
+    const farms: any[] = await prisma.$queryRaw`
+      SELECT
+        id,
+        name,
+        district,
+        ST_Y(location::geometry) as latitude,
+        ST_X(location::geometry) as longitude
+      FROM "Farm"
+    `;
+    return farms;
   }
 
   @Get('farm/:id/products')
