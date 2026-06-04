@@ -46,6 +46,7 @@ model User {
   farms         Farm[]         @relation("FarmOwner")
   orders        Order[]        @relation("UserOrders")
   communityDrop CommunityDrop? @relation(fields: [communityDropId], references: [id])
+  items         OrderItem[]
 }
 
 model Farm {
@@ -75,7 +76,8 @@ model Product {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  farm Farm @relation(fields: [farmId], references: [id])
+  farm      Farm        @relation(fields: [farmId], references: [id])
+  OrderItem OrderItem[]
 }
 
 model CommunityDrop {
@@ -108,4 +110,18 @@ model Order {
 
   user          User           @relation("UserOrders", fields: [userId], references: [id])
   communityDrop CommunityDrop? @relation(fields: [communityDropId], references: [id])
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }
