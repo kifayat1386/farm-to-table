@@ -49,7 +49,7 @@ async function runTest() {
 
   // 4. Hit the REST API Endpoint
   console.log('\n🚀 Triggering POST /v1/checkout/accrual...');
-  const res = await fetch('http://localhost:3001/v1/checkout/accrual', {
+  const res = await fetch('http://localhost:3002/v1/checkout/accrual', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
